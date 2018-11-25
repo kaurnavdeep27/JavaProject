@@ -1,0 +1,95 @@
+DROP TABLE IF EXISTS `app_studentcourses`;
+DROP TABLE IF EXISTS `app_course`;
+DROP TABLE IF EXISTS `app_professor`;
+DROP TABLE IF EXISTS `app_ta`;
+DROP TABLE IF EXISTS `app_admin`;
+DROP TABLE IF EXISTS `app_students`;
+DROP TABLE IF EXISTS `app_users`;
+
+CREATE TABLE `app_users` (
+  `userid` int(11) NOT NULL,
+  `loginid` varchar(50) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  PRIMARY KEY (`userid`)
+);
+
+
+
+CREATE TABLE `app_admin` (
+  `adminid` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `userid` int(11) NOT NULL,
+  `designation` varchar(50) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `phone` varchar(30) NOT NULL,
+  PRIMARY KEY (`adminid`),
+  KEY `app_admin_fk_userid_idx` (`userid`),
+  CONSTRAINT `app_admin_fk_userid` FOREIGN KEY (`userid`) REFERENCES `app_users` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+
+CREATE TABLE `app_students` (
+  `studentid` varchar(50) NOT NULL,
+  `studentname` varchar(100) NOT NULL,
+  `userid` int(11) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `phone` varchar(30) NOT NULL,
+  `address` varchar(300) NOT NULL,
+  PRIMARY KEY (`studentid`),
+  KEY `app_students_fk_userid_idx` (`userid`),
+  CONSTRAINT `app_students_fk_userid` FOREIGN KEY (`userid`) REFERENCES `app_users` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+
+CREATE TABLE `app_professor` (
+  `professorid` int(11) NOT NULL,
+  `professorname` varchar(100) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `phone` varchar(30) NOT NULL,
+  PRIMARY KEY (`professorid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `app_ta` (
+  `taid` int(11) NOT NULL,
+  `taname` varchar(100) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `phone` varchar(30) NOT NULL,
+  PRIMARY KEY (`taid`)
+);
+
+
+CREATE TABLE `app_course` (
+  `courseid` varchar(50) NOT NULL,
+  `coursename` varchar(100) NOT NULL,
+  `term` varchar(50) NOT NULL,
+  `professorid` int(11) NOT NULL,
+  `taid` int(11) NOT NULL,
+  PRIMARY KEY (`courseid`),
+  KEY `app_course_fk_profid_idx` (`professorid`),
+  KEY `app_course_fk_taid_idx` (`taid`),
+  CONSTRAINT `app_course_fk_profid` FOREIGN KEY (`professorid`) REFERENCES `app_professor` (`professorid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `app_course_fk_taid` FOREIGN KEY (`taid`) REFERENCES `app_ta` (`taid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+
+
+CREATE TABLE `app_studentcourses` (
+  `studentcourseid` int(11) NOT NULL,
+  `courseid` varchar(50) NOT NULL,
+  `studentid` varchar(50) NOT NULL,
+  PRIMARY KEY (`studentcourseid`),
+  UNIQUE KEY `courseid_UNIQUE` (`courseid`),
+  UNIQUE KEY `studentid_UNIQUE` (`studentid`),
+  CONSTRAINT `app_sc_fk_courseid` FOREIGN KEY (`courseid`) REFERENCES `app_course` (`courseid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `app_sc_fk_studentid` FOREIGN KEY (`studentid`) REFERENCES `app_students` (`studentid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+
+
+
+
+
+
+
+
